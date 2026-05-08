@@ -26,9 +26,15 @@ Ce projet a pour vocation de nous présenter et d'appréhender le côté concept
 
 > Linux / Mac : [install](./documents/linux/install.md)
 
+## Pour les moins initiés à Docker je vosu recommande de cloner le projet et ne pas faire attention à Docker. Utilisez Laragon 6/
+git clone https://github.com/refschool/easyupload.git
+composer install
+copiez la bdd vide depuis documents vers la racine du document.
+
+
 ## Windows installation avec Docker
 cloner le projet, aller dans le répertoire du projet, lancez le script shell
-./devops/init/sh
+./devops/init.sh
 docker compose up
 
 votre site est accessible via http://localhost:8000
