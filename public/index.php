@@ -1,61 +1,86 @@
 <?php
 
-require_once '../vendor/autoload.php';
+declare(strict_types=1);
 
-include_once '../src/dotEnv.php';
-include_once '../src/log.php';
+/**
+ * EasyUpload - Front Controller
+ * public/index.php
+ */
 
-dotEnv(__DIR__ . '/../');
+define('PROJECT_ROOT', dirname(__DIR__, 1));
 
+use App\Core\Request;
+use App\Core\Router;
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+require_once PROJECT_ROOT . '/vendor/autoload.php';
 
+/**
+ * Charger variables d'environnement
+ */
+use Dotenv\Dotenv;
 
-function renderPage(string $view, string $title = ''): void
-{
-    $title = $title ?: ($_ENV['MAIL_FROM_NAME'] ?? 'Site');
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
-    require __DIR__ . '/../src/_header.php';
-    require __DIR__ . '/../src/' . $view;
-    require __DIR__ . '/../src/_footer.php';
-}
+/**
+ * Initialiser requête et router
+ */
+$request = new Request();
+$router  = new Router();
 
-function runScript(string $file): void
-{
-    require __DIR__ . '/../src/' . $file;
-}
+/**
+ * Middleware Turnstile
+ */
+use App\Services\TurnstileService;
+use App\Middlewares\TurnstileMiddleware;
 
-switch ($uri) {
-    case '/':
-        renderPage("accueil.php");
-        break;
+require_once __DIR__ . '/../src/Routes/TurnstileRoute.php';
 
-    case '/upload':
-        runScript("upload.php");
-        break;
+require_once __DIR__ . '/../src/Routes/legalRoute.php';
 
-    case '/download/getFile':
-        $file = $_GET['file'] ?? null;
-        if (!$file) {
-            http_response_code(400);
-        }
-        runScript("Download.php");
-        break;
+/**
+ * Routes GET
+ */
+$router->get('/', [App\Controllers\HomeController::class, 'index']);
 
-    case '/download/':
-        $file = $_GET['file'] ?? null;
-        if (!$file) {
-            http_response_code(400);
-        }
-        renderPage("downloadPage.php");
-        break;
+$router->get('/download', [
+    App\Controllers\DownloadController::class,
+    'show',
+]);
 
-    case '/login':
-        require __DIR__ . '/../src/pageLogin.html';
-        break;
+$router->get('/download/file', [
+    App\Controllers\DownloadController::class,
+    'file',
+]);
 
-    default:
-        http_response_code(404);
-        require __DIR__ . '/404.html';
-        break;
-}
+$router->get('/login', [
+    App\Controllers\AuthController::class,
+    'loginPage',
+]);
+
+/**
+ * Routes POST
+ */
+$router->post('/upload', [
+    App\Controllers\UploadController::class,
+    'store',
+]);
+
+$router->post('/login', [
+    App\Controllers\AuthController::class,
+    'login',
+]);
+
+$router->post('/logout', [
+    App\Controllers\AuthController::class,
+    'logout',
+]);
+
+$turnstileService = new TurnstileService();
+$turnstileMiddleware = new TurnstileMiddleware($turnstileService);
+$turnstileMiddleware->handle($request->uri());
+
+/**
+ * Dispatch HTTP
+ */
+$router->dispatch($request);

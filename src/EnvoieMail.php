@@ -9,7 +9,7 @@ dotEnv("../");
 require_once '../vendor/autoload.php';
 
 
-function emailSetting()
+function emailSettings()
 {
     //Create an instance; passing `true` enables exceptions
     $mail = new PHPMailService();
@@ -34,7 +34,7 @@ function sendToDestinataire($mail, $sendTo, $sendFrom, $downloadFile, $messagepe
         $mail->Body    = $mailTemplate;
         $sendSuccess = $mail->send();
         if ($sendSuccess) {
-            setLog("Envoi email au destinataires " . $sendTo . " Ok", "TRACE");
+            setLog("Envoi email au(x) destinataire(s) " . $sendTo . " Ok", "TRACE");
             return 'noerror';
         }
     } catch (Exception $e) {
@@ -50,7 +50,7 @@ function sendToDestinataire($mail, $sendTo, $sendFrom, $downloadFile, $messagepe
 function envoieMail($sendTo, $sendFrom, $downloadFile, $messageperso)
 {
     $sendToD = explode(',', $sendTo);
-    $mail = eMailSetting();
+    $mail = emailSettings();
     $error = 'noerror';
     $countFail = 0;
     setLog("Envoi du mail à l'expéditeur", 'TRACE');
@@ -79,7 +79,7 @@ function envoieMail($sendTo, $sendFrom, $downloadFile, $messageperso)
     $mailTemplate = expeMailTemplate($sendTo, $sendFrom, $case);
     //Envoie du second mail
     $mail->clearAllRecipients();
-    $mail = eMailSetting(); // a supprimé déjat init ligne 42
+    $mail = emailSettings(); // a supprimé déjat init ligne 42
     $mail->addAddress($sendFrom, '');
     $mail->Subject = $messageSubject;
     $mail->Body    = $mailTemplate;
@@ -128,38 +128,38 @@ function destiMailTemplate($sendTo, $sendFrom, $downloadLink, $delais, $messagep
     </head>
     <body>
         <div class="container">
-        <div class="box">
-        <table>
-            <tr>
-                <!-- 
-                Il pourrait être pertinant d'avoir le lien vers le logo dans une variable d'environnement 
-                mais si le site est déployer on pourrait utiliser l'image stockée dans le serveur plutôt 
-                que de faire une requête à un serveur externe
-                -->
-                <td align="right"><img src="https://i.goopics.net/kn2ydb.png" class="logo" alt="logo de EasyUpload"></td>
-                <td valign="bottom" align="left"><h2>Easy Upload</h2></td>
-            </tr>
-            <tr>
-                <td colspan="2"><h2>Bonjour {$sendTo},</h2></td>
-            </tr>
-            <tr>
-                <td colspan="2" ><p>{$sendFrom} souhaite vous transmettre des documents. Pour les télécharger, veuillez cliquer sur le lien suivant:</p></td>
-            </tr>
-            <tr>
-                <td colspan="2"><p style="text-align:center; margin: 20px 0;"><a href="{$downloadLink}" class="downloadButton">Télécharger les documents</a></p></td>
-            </tr>
-            <tr>
-                <td colspan="2"><p>Veuillez noter que ce lien sera valide pendant $delais jours. Passé ce délai, vos documents ne seront plus disponibles. Merci.</p></td>
-            </tr>
-            <tr>
-                <td colspan="2"><p>L'équipe EasyUpload.</p></td>
-            </tr>
-                {$messageperso}
+            <div class="box">
+                <table>
+                    <tr>
+                        <!-- 
+                        Il pourrait être pertinant d'avoir le lien vers le logo dans une variable d'environnement 
+                        mais si le site est déployer on pourrait utiliser l'image stockée dans le serveur plutôt 
+                        que de faire une requête à un serveur externe
+                        -->
+                        <td align="right"><img src="https://i.goopics.net/kn2ydb.png" class="logo" alt="logo de EasyUpload"></td>
+                        <td valign="bottom" align="left"><h2>Easy Upload</h2></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><h2>Bonjour {$sendTo},</h2></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" ><p>{$sendFrom} souhaite vous transmettre des documents. Pour les télécharger, veuillez cliquer sur le lien suivant:</p></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><p style="text-align:center; margin: 20px 0;"><a href="{$downloadLink}" class="downloadButton">Télécharger les documents</a></p></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><p>Veuillez noter que ce lien sera valide pendant $delais jours. Passé ce délai, vos documents ne seront plus disponibles. Merci.</p></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><p>L'équipe EasyUpload.</p></td>
+                    </tr>
+                        {$messageperso}
+                    <tr>
+                        <td colspan="2" align="center"><a href="{$link}">Lien vers EasyUpload</a></td>
+                    </tr>
+                </table>
             </div>
-            <tr>
-                <td colspan="2" align="center"><a href="{$link}">Lien vers EasyUpload</a></td>
-            </tr>
-        </table>
         </div>
     </body>
     </html>

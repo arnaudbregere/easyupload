@@ -4,3 +4,5 @@ vendor/
 .dev_local/
 var/
 .vscode
+.php-cs-fixer.*
+*.sqbpro
