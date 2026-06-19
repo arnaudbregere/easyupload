@@ -12,7 +12,13 @@ class SqliteService
 
     public function __construct(?string $dbPath = null)
     {
-        $this->dbPath = $dbPath ?? (PROJECT_ROOT . trim($_ENV['DB_DATABASE'], '.') ?? __DIR__ . '/../../storage/bdd.db');
+        if ($dbPath !== null) {
+            $this->dbPath = $dbPath;
+        } else {
+            $dbFile = $_ENV['DB_DATABASE'] ?? 'bdd.db';
+            $this->dbPath = rtrim(PROJECT_ROOT, '\\/') . DIRECTORY_SEPARATOR . ltrim($dbFile, '\\/');
+        }
+
         $this->connect();
     }
 

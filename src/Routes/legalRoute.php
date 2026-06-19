@@ -1,5 +1,7 @@
 <?php
 
+use App\Controllers\LegalController;
+
 /** @var \App\Core\Router $router */
 
 $router->get('/mentions-legales', [App\Controllers\LegalController::class, 'legal']);
