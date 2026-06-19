@@ -15,15 +15,13 @@
 - Cliquez sur "Add widget"
 - Remplissez le formulaire
 
-| Champ | Valeur | Explication |
-| :---: | :---: | :---: |
-| Site | name MonSite-AntiBot | Nom interne pour identifier le widget |
-| Domain | localhost, mon-site.com | Domaines autorisés (sans http://) |
-| Widget | mode Managed | Recommandé : gère automatiquement le défi |
-| Action | non-interactive | Ou laissez vide pour auto |
+   - Widget Name
+   - ajouter le nom de domaine jedeploiemonappli.com
+   - Widget Mode à managed
+
 
 - Cliquez sur "Create"
-- Voici vos clés : 1 PRIVATE et 1 PUBLIC.
+- Voici vos clés : 1 PRIVATE : TURNSTILE_SECRET_KEY  et 1 PUBLIC : TURNSTILE_SITEKEY
 
 ## Étape 3 : Configurer le projet avec Turnstile
 

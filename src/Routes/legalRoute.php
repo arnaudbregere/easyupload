@@ -2,11 +2,7 @@
 
 /** @var \App\Core\Router $router */
 
-use App\Controllers\LegalController;
-
-$legalController = new LegalController();
-
-$router->get('/mentions-legales', [$legalController, 'legal']);
-$router->get('/confidentialite', [$legalController, 'privacy']);
-$router->get('/cgu', [$legalController, 'cgu']);
+$router->get('/mentions-legales', [App\Controllers\LegalController::class, 'legal']);
+$router->get('/confidentialite', [App\Controllers\LegalController::class, 'privacy']);
+$router->get('/cgu', [App\Controllers\LegalController::class, 'cgu']);
 // $router->get('/cgv', [$legalController, 'cgv']);
